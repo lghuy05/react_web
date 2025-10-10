@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react"
 import heroImg from "./assets/hero.png"
 import Search from "./components/Search.jsx"
+import Spinner from "./components/Spinner.jsx";
+import MovieCard from "./components/MovieCard.jsx";
 
 const API_KEY = import.meta.env.VITE_OMDB_API_KEY;
 const API_BASE_URL = `http://www.omdbapi.com/?apikey=${API_KEY}&`;
@@ -57,15 +59,15 @@ const App = () => {
         </header>
 
         <section className="all-movies">
-          <h2>All movies</h2>
+          <h2 className="mt-[20px]">All movies</h2>
           {isLoading ? (
-            <p className="text-white">Loading...</p>
+            <Spinner />
           ) : errorMessage ? (
             <p className="text-red-500">{errorMessage}</p>
           ) : (
             <ul>
               {movieList.map((movie) => (
-                <p className="text-white">{movie.Title}</p>
+                <MovieCard key={movie.imdbID} movie={movie} />
               ))}
             </ul>
           )}
