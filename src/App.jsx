@@ -24,6 +24,7 @@ const App = () => {
         throw new Error("Failed to fetch movies");
       }
       const data = await response.json();
+      console.log(data);
       if (data.Response === "False") {
         setErrorMessage(data.Error || "Failed to fetch movies");
         setMovieList([]);
@@ -56,7 +57,17 @@ const App = () => {
         </header>
         <section className="all-movies">
           <h2>All movies</h2>
-          {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+          {isLoading ? (
+            <p className="text-white">Loading...</p>
+          ) : errorMessage ? (
+            <p className="text-red-500">{errorMessage}</p>
+          ) : (
+            <ul>
+              {movieList.map((movie) => (
+                <p className="text-white">{movie.Title}</p>
+              ))}
+            </ul>
+          )}
         </section>
       </div>
 
