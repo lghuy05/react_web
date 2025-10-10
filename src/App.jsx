@@ -6,14 +6,19 @@ const API_KEY = import.meta.env.VITE_OMDB_API_KEY;
 const API_BASE_URL = `http://www.omdbapi.com/?apikey=${API_KEY}&`;
 
 const App = () => {
+
   const [searchTerm, setSearchTerm] = useState('');
 
   const [errorMessage, setErrorMessage] = useState('');
+  const [movieList, setMovieList] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchMovies = async () => {
+    setIsLoading(true);
+    setErrorMessage('');
 
     try {
-      const endpoint = `${API_BASE_URL}t=Titanic`;
+      const endpoint = `${API_BASE_URL}s=avengers`;
       const response = await fetch(endpoint);
       if (!response.ok) {
         throw new Error("Failed to fetch movies");
@@ -21,12 +26,18 @@ const App = () => {
       const data = await response.json();
       if (data.Response === "False") {
         setErrorMessage(data.Error || "Failed to fetch movies");
+        setMovieList([]);
+        return;
       }
+
+      setMovieList(data.Search || []);
       alert(JSON.stringify(data, null, 2));
 
     } catch (error) {
       console.log(`Error fetching movies: ${error}`);
       setErrorMessage("Error fetching movies. Please try again");
+    } finally {
+      setIsLoading(false);
     }
   }
   useEffect(() => {
