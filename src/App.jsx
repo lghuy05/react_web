@@ -7,22 +7,33 @@ const API_BASE_URL = `http://www.omdbapi.com/?apikey=${API_KEY}&`;
 
 const App = () => {
   const [searchTerm, setSearchTerm] = useState('');
+
   const [errorMessage, setErrorMessage] = useState('');
+
   const fetchMovies = async () => {
+
     try {
       const endpoint = `${API_BASE_URL}t=Titanic`;
       const response = await fetch(endpoint);
+      if (!response.ok) {
+        throw new Error("Failed to fetch movies");
+      }
       const data = await response.json();
+      if (data.Response === "False") {
+        setErrorMessage(data.Error || "Failed to fetch movies");
+      }
       alert(JSON.stringify(data, null, 2));
-      console.log(API_KEY)
+
     } catch (error) {
       console.log(`Error fetching movies: ${error}`);
       setErrorMessage("Error fetching movies. Please try again");
     }
   }
   useEffect(() => {
+    console.log("Hi")
     fetchMovies();
   }, []);
+
   return (
     <main>
       <div className="pattern" />
