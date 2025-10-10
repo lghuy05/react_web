@@ -8,7 +8,6 @@ const API_BASE_URL = `http://www.omdbapi.com/?apikey=${API_KEY}&`;
 const App = () => {
 
   const [searchTerm, setSearchTerm] = useState('');
-
   const [errorMessage, setErrorMessage] = useState('');
   const [movieList, setMovieList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -20,11 +19,13 @@ const App = () => {
     try {
       const endpoint = `${API_BASE_URL}s=avengers`;
       const response = await fetch(endpoint);
+
       if (!response.ok) {
         throw new Error("Failed to fetch movies");
       }
+
       const data = await response.json();
-      console.log(data);
+
       if (data.Response === "False") {
         setErrorMessage(data.Error || "Failed to fetch movies");
         setMovieList([]);
@@ -33,7 +34,6 @@ const App = () => {
 
       setMovieList(data.Search || []);
       alert(JSON.stringify(data, null, 2));
-
     } catch (error) {
       console.log(`Error fetching movies: ${error}`);
       setErrorMessage("Error fetching movies. Please try again");
@@ -41,8 +41,8 @@ const App = () => {
       setIsLoading(false);
     }
   }
+
   useEffect(() => {
-    console.log("Hi")
     fetchMovies();
   }, []);
 
@@ -55,6 +55,7 @@ const App = () => {
           <h1>Find <span className="text-gradient">movies</span> you'll enjoy without the hassle</h1>
           <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
         </header>
+
         <section className="all-movies">
           <h2>All movies</h2>
           {isLoading ? (
