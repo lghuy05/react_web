@@ -3,6 +3,8 @@ import heroImg from "./assets/hero.png"
 import Search from "./components/Search.jsx"
 import Spinner from "./components/Spinner.jsx";
 import MovieCard from "./components/MovieCard.jsx";
+import { useDebounce } from "react-use";
+import { updateSearchCount } from "./appwrite.js";
 
 const API_KEY = import.meta.env.VITE_OMDB_API_KEY;
 const API_BASE_URL = `http://www.omdbapi.com/?apikey=${API_KEY}&`;
@@ -13,6 +15,9 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [movieList, setMovieList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [debouncedSearchTerm, setdebouncedSearchTerm] = useState('');
+
+  useDebounce(() => setdebouncedSearchTerm(searchTerm), 500, [searchTerm])
 
   const fetchMovies = async (query = '') => {
     setIsLoading(true);
@@ -37,6 +42,9 @@ const App = () => {
       }
 
       setMovieList(data.Search || []);
+      if (query && data.Search.length > 0) {
+        await updateSearchCount(query, data.Search[0]);
+      }
     } catch (error) {
       console.log(`Error fetching movies: ${error}`);
       setErrorMessage("Error fetching movies. Please try again");
@@ -46,8 +54,8 @@ const App = () => {
   }
 
   useEffect(() => {
-    fetchMovies(searchTerm);
-  }, [searchTerm]);
+    fetchMovies(debouncedSearchTerm);
+  }, [debouncedSearchTerm]);
 
   return (
     <main>
