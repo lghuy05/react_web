@@ -14,12 +14,14 @@ const App = () => {
   const [movieList, setMovieList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const fetchMovies = async () => {
+  const fetchMovies = async (query = '') => {
     setIsLoading(true);
     setErrorMessage('');
 
     try {
-      const endpoint = `${API_BASE_URL}s=avengers`;
+      const endpoint = query
+        ? `${API_BASE_URL}s=${encodeURIComponent(query)}`
+        : `${API_BASE_URL}s=avengers`;
       const response = await fetch(endpoint);
 
       if (!response.ok) {
@@ -35,7 +37,6 @@ const App = () => {
       }
 
       setMovieList(data.Search || []);
-      alert(JSON.stringify(data, null, 2));
     } catch (error) {
       console.log(`Error fetching movies: ${error}`);
       setErrorMessage("Error fetching movies. Please try again");
@@ -45,8 +46,8 @@ const App = () => {
   }
 
   useEffect(() => {
-    fetchMovies();
-  }, []);
+    fetchMovies(searchTerm);
+  }, [searchTerm]);
 
   return (
     <main>
